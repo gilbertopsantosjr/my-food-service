@@ -1,8 +1,12 @@
-import { Category } from '@/category/model/category'
+import { CategoryModel } from '@/category/model/category.model'
 
 /* use abstract class as javascript doesnt have interfaces for DI*/
 export abstract class CategoryQueriesRepository {
-  abstract findById(categoryId: number): Promise<Category>
-  abstract findAll(categoryId: number): Promise<Category[]>
-  abstract findByRestaurantId(restaurantId: number): Promise<Category[]>
+  abstract findByTitleAndResturantId(
+    name: string,
+    restaurantId: number
+  ): Promise<CategoryModel>
+  abstract findById(categoryId: number): Promise<CategoryModel>
+  abstract findAll(): Promise<CategoryModel[]>
+  abstract findAllByRestaurantId(restaurantId: number): Promise<CategoryModel[]>
 }

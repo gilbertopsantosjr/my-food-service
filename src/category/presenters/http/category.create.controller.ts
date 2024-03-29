@@ -1,13 +1,12 @@
-import { CategoryCreateService } from '@/category/application/category.service'
+import { CategoryService } from '@/category/application/category.service'
 import { Body, Controller, Post } from '@nestjs/common'
 import { CategoryCreateDto } from './dto/category.create.dto'
 
 @Controller('category')
 export class CategoryCreateController {
-  constructor(private readonly categoryService: CategoryCreateService) {}
+  constructor(private readonly categoryService: CategoryService) {}
   @Post()
   execute(@Body() categoryDto: CategoryCreateDto) {
-    // validate
     return this.categoryService.execute(categoryDto)
   }
 }

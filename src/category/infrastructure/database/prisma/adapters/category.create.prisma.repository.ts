@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CategoryCreateRepository } from '@/category/application/ports/category.create.repository'
-import { Category } from '@/category/model/category'
+import { CategoryModel } from '@/category/model/category.model'
+import { PrismaService } from '@core/databases/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
-import { CategoryPrismaEntity } from '../entities/category.prisma.entity'
+import { Category } from '@prisma/client'
 import { CategoryFactory } from '../factories/category.factory'
 
 //Adapter
@@ -10,8 +11,12 @@ import { CategoryFactory } from '../factories/category.factory'
 export class CategoryCreatePrismaRepository
   implements CategoryCreateRepository
 {
-  async execute(category: Category): Promise<Category> {
-    const categoryPrisma = new CategoryPrismaEntity()
-    return CategoryFactory.toDomain(categoryPrisma)
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async execute(category: CategoryModel): Promise<Category> {
+    const toPersist = CategoryFactory.toPersist(category)
+    return await this.prismaService.category.create({
+      data: toPersist
+    })
   }
 }

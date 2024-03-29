@@ -1,19 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { CategoryInfraModule } from '../infrastructure/category.infra.module'
 import { CategoryModule } from './category.module'
-import { CategoryCreateService } from './category.service'
+import { CategoryService } from './category.service'
 
 describe('CategoryServiceTest', () => {
-  let service: CategoryCreateService
+  let service: CategoryService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        CategoryModule.withInfrastructure(CategoryInfraModule.use('TEST'))
-      ]
+      imports: [CategoryModule]
     }).compile()
 
-    service = module.get<CategoryCreateService>(CategoryCreateService)
+    service = module.get<CategoryService>(CategoryService)
   })
 
   it('should be defined', () => {

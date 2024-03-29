@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CategoryQueriesRepository } from '@/category/application/ports/category.queries.repository'
-import { Category } from '@/category/model/category'
+import { CategoryModel } from '@/category/model/category.model'
+import { PrismaService } from '@core/databases/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
-import { CategoryPrismaEntity } from '../entities/category.prisma.entity'
+import { Prisma } from '@prisma/client'
 import { CategoryFactory } from '../factories/category.factory'
 
 //Adapter
@@ -10,17 +11,43 @@ import { CategoryFactory } from '../factories/category.factory'
 export class CategoryQueriesPrismaRepository
   implements CategoryQueriesRepository
 {
-  async findById(categoryId: number): Promise<Category> {
-    return CategoryFactory.toDomain(new CategoryPrismaEntity())
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async findByTitleAndResturantId(
+    name: string,
+    restaurantId: number
+  ): Promise<CategoryModel> {
+    const result = await this.prismaService.category.findFirst({
+      where: {
+        name,
+        restaurants: {
+          some: { id: restaurantId }
+        }
+      } as Prisma.CategoryWhereInput
+    })
+    return CategoryFactory.toModel(result)
   }
 
-  async findAll(categoryId: number): Promise<Category[]> {
-    const entities = [new CategoryPrismaEntity()]
-    return entities.map((item) => CategoryFactory.toDomain(item))
+  async findById(categoryId: number): Promise<CategoryModel> {
+    const result = await this.prismaService.category.findUnique({
+      where: { id: categoryId }
+    })
+    return CategoryFactory.toModel(result)
   }
 
-  async findByRestaurantId(restaurantId: number): Promise<Category[]> {
-    const entities = [new CategoryPrismaEntity()]
-    return entities.map((item) => CategoryFactory.toDomain(item))
+  async findAll(): Promise<CategoryModel[]> {
+    const entities = await this.prismaService.category.findMany()
+    return entities.map((item) => CategoryFactory.toModel(item))
+  }
+
+  async findAllByRestaurantId(restaurantId: number): Promise<CategoryModel[]> {
+    const entities = await this.prismaService.category.findMany({
+      where: {
+        restaurants: {
+          some: { id: restaurantId }
+        }
+      } as Prisma.CategoryWhereInput
+    })
+    return entities.map((item) => CategoryFactory.toModel(item))
   }
 }

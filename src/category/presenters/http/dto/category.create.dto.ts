@@ -1,4 +1,9 @@
+// validate
 export class CategoryCreateDto {
-  name: string
+  id: number
+  title: string
+  description: string
   restaurantId: number
+  userId: number
+  createAt: Date
 }

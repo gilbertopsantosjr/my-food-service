@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { CategoryModule } from './category/application/category.module'
-import { CategoryInfraModule } from './category/infrastructure/category.infra.module'
 
 @Module({
-  imports: [
-    CategoryModule.withInfrastructure(CategoryInfraModule.use('prisma'))
-  ]
+  imports: [ConfigModule.forRoot(), CategoryModule]
 })
 export class AppModule {}

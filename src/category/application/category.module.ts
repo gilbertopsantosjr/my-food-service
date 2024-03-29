@@ -1,23 +1,27 @@
 import { CategoryCreateController } from '@/category/presenters/http/category.create.controller'
-import { DynamicModule, Module, Type } from '@nestjs/common'
-import { CategoryCreatePrismaRepository } from '../infrastructure/database/prisma/adapters'
-import { CategoryCreateService } from './category.service'
+import { PrismaModule } from '@core/databases/prisma/prisma.module'
+import { Module } from '@nestjs/common'
+import {
+  CategoryCreatePrismaRepository,
+  CategoryQueriesPrismaRepository
+} from '../infrastructure/database/prisma/adapters'
+import { CategoryService } from './category.service'
 import { CategoryCreateRepository } from './ports/category.create.repository'
+import { CategoryQueriesRepository } from './ports/category.queries.repository'
 
-@Module({})
-export class CategoryModule {
-  static withInfrastructure(infraModule: Type | DynamicModule) {
-    return {
-      module: CategoryModule,
-      imports: [infraModule],
-      controllers: [CategoryCreateController],
-      providers: [
-        {
-          provide: CategoryCreateRepository,
-          useClass: CategoryCreatePrismaRepository
-        },
-        CategoryCreateService
-      ]
-    }
-  }
-}
+@Module({
+  imports: [PrismaModule.register()],
+  controllers: [CategoryCreateController],
+  providers: [
+    {
+      provide: CategoryCreateRepository,
+      useClass: CategoryCreatePrismaRepository
+    },
+    {
+      provide: CategoryQueriesRepository,
+      useClass: CategoryQueriesPrismaRepository
+    },
+    CategoryService
+  ]
+})
+export class CategoryModule {}
