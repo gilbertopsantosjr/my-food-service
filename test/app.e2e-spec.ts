@@ -15,7 +15,7 @@ describe('AppController (e2e)', () => {
     await app.init()
   })
 
-  it('/ (GET)', () => {
+  it('/ (GET) category', () => {
     return request(app.getHttpServer()).get('/category').expect(200)
   })
 })
