@@ -9,6 +9,7 @@ export class RestaurantCreateController {
   constructor(private readonly restaurantService: RestaurantService) {}
   @Post()
   async execute(@Body() restaurantDto: RestaurantDto) {
+    this.logger.log('Creating a restaurant', restaurantDto)
     const result = await this.restaurantService.create({
       ...restaurantDto,
       user: { id: 1 }

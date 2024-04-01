@@ -11,11 +11,30 @@ export class RestaurantQueriesPrismaRepository
 {
   constructor(private readonly prismaService: PrismaService) {}
 
+  async findByTitleAndUserId(
+    title: string,
+    userId: number
+  ): Promise<RestaurantModel> {
+    const query = {
+      where: {
+        title,
+        userId: userId
+      } as Prisma.RestaurantWhereUniqueInput,
+      include: {
+        categories: true
+      }
+    } satisfies Prisma.RestaurantFindUniqueArgs
+
+    const result = await this.prismaService.restaurant.findUnique(query)
+    return result ? RestaurantFactory.toModel(result) : null
+  }
+
   async findById(restaurantId: number): Promise<RestaurantModel> {
     const result = await this.prismaService.restaurant.findUnique({
       where: { id: restaurantId },
       include: {
-        user: true
+        user: true,
+        categories: true
       }
     })
     return result ? RestaurantFactory.toModel(result) : null
@@ -24,7 +43,8 @@ export class RestaurantQueriesPrismaRepository
   async findAll(): Promise<RestaurantModel[]> {
     const entities = await this.prismaService.restaurant.findMany({
       include: {
-        user: true
+        user: true,
+        categories: true
       }
     })
     return entities
@@ -40,7 +60,8 @@ export class RestaurantQueriesPrismaRepository
         }
       } as Prisma.RestaurantWhereInput,
       include: {
-        user: true
+        user: true,
+        categories: true
       }
     })
     return entities

@@ -5,4 +5,8 @@ export abstract class RestaurantQueriesRepository {
   abstract findById(categoryId: number): Promise<RestaurantModel>
   abstract findAll(): Promise<RestaurantModel[]>
   abstract findAllByUserId(userId: number): Promise<RestaurantModel[]>
+  abstract findByTitleAndUserId(
+    title: string,
+    userId: number
+  ): Promise<RestaurantModel>
 }

@@ -3,7 +3,7 @@ import { ValidationError } from '@core/errors/validation.error'
 import { Prisma } from '@prisma/client'
 import { z } from 'zod'
 
-export type CategoriesWithRestaurantesAndUsers = Prisma.CategoryGetPayload<{
+export type CategoriesWithRestaurantes = Prisma.CategoryGetPayload<{
   include: {
     restaurants: true
   }
@@ -65,7 +65,7 @@ export class CategoryFactory {
     } satisfies CategoryModel
   }
 
-  static toModel(entity: CategoriesWithRestaurantesAndUsers): CategoryModel {
+  static toModel(entity: CategoriesWithRestaurantes): CategoryModel {
     const val = categorySchema.safeParse(entity)
 
     if (val.success === false) {

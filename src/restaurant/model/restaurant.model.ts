@@ -1,13 +1,10 @@
+import { CategoryModel } from '@/category/model/category.model'
+
 export type RestaurantModel = {
   id: number
   title: string
   content: string
-  createAt: Date
+  createdAt: Date
   published: boolean
-  categories?: [
-    Partial<{
-      id: number
-      name: string
-    }>
-  ]
+  categories?: CategoryModel[]
 }

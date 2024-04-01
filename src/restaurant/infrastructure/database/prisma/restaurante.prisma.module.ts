@@ -1,20 +1,18 @@
 import { RestaurantCreateRepository } from '@/restaurant/application/ports/restaurant.create.repository'
 import { RestaurantQueriesRepository } from '@/restaurant/application/ports/restaurant.queries.repository'
-import { PrismaService } from '@core/databases/prisma/prisma.service'
+import { PrismaModule } from '@core/databases/prisma/prisma.module'
 import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { RestaurantCreatePrismaRepository } from './adapters/restaurant.create.prisma.repository'
 import { RestaurantQueriesPrismaRepository } from './adapters/restaurant.queries.prisma.repository'
 
 @Module({})
 export class CategoryPrismaModule {
-  static forRoot(prismaService: PrismaService | any) {
+  static forRoot() {
     return {
       module: CategoryPrismaModule,
+      imports: [ConfigModule.forRoot(), PrismaModule.register()],
       providers: [
-        {
-          provide: PrismaService,
-          useValue: prismaService
-        },
         {
           provider: RestaurantCreateRepository,
           useClass: RestaurantCreatePrismaRepository

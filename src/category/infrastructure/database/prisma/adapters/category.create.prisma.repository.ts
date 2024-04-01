@@ -2,7 +2,7 @@
 import { CategoryCreateRepository } from '@/category/application/ports/category.create.repository'
 import { CategoryModel } from '@/category/model/category.model'
 import { PrismaService } from '@core/databases/prisma/prisma.service'
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { CategoryFactory } from '../factories/category.factory'
 
 //Adapter
@@ -10,6 +10,7 @@ import { CategoryFactory } from '../factories/category.factory'
 export class CategoryCreatePrismaRepository
   implements CategoryCreateRepository
 {
+  private readonly logger = new Logger(CategoryCreatePrismaRepository.name)
   constructor(private readonly prismaService: PrismaService) {}
 
   async execute(category: CategoryModel): Promise<CategoryModel> {

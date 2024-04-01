@@ -8,5 +8,6 @@ export abstract class CategoryQueriesRepository {
   ): Promise<CategoryModel>
   abstract findById(categoryId: number): Promise<CategoryModel>
   abstract findAll(): Promise<CategoryModel[]>
+  abstract findAllByIds(categoryIds: number[]): Promise<CategoryModel[]>
   abstract findAllByRestaurantId(restaurantId: number): Promise<CategoryModel[]>
 }

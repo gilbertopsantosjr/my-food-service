@@ -13,6 +13,20 @@ export class CategoryQueriesPrismaRepository
 {
   constructor(private readonly prismaService: PrismaService) {}
 
+  async findAllByIds(categoryIds: number[]): Promise<CategoryModel[]> {
+    const entities = await this.prismaService.category.findMany({
+      include: {
+        restaurants: true
+      },
+      where: {
+        id: {
+          in: categoryIds
+        }
+      } as Prisma.CategoryWhereInput
+    })
+    return entities ? entities.map((item) => CategoryFactory.toModel(item)) : []
+  }
+
   async findByTitleAndResturantId(
     title: string,
     restaurantId: number

@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common'
-import { RestaurantFactory } from '../infrastructure/database/prisma/factories/restaurant.factory'
+import { CategoryQueriesRepository } from '@/category/application/ports/category.queries.repository'
+import { Injectable, Logger } from '@nestjs/common'
 import { RestaurantModel } from '../model/restaurant.model'
 import { RestaurantWithUser } from '../presenters/http/dto/restaurante.dto'
 import { RestaurantCreateRepository } from './ports/restaurant.create.repository'
@@ -7,14 +7,33 @@ import { RestaurantQueriesRepository } from './ports/restaurant.queries.reposito
 
 @Injectable()
 export class RestaurantService {
+  private readonly logger = new Logger(RestaurantService.name)
   constructor(
     private readonly createRepository: RestaurantCreateRepository,
-    private readonly queryRepository: RestaurantQueriesRepository
+    private readonly queryRepository: RestaurantQueriesRepository,
+    private readonly categoryQueryRepository: CategoryQueriesRepository
   ) {}
 
   async create(restaurant: RestaurantWithUser): Promise<RestaurantModel> {
-    const result = await this.createRepository.execute(restaurant)
-    return RestaurantFactory.toModel(result)
+    //rules
+    // check if categories exists
+    const categoriesIds = restaurant.categories.map((item) => item.id)
+    const categoriesExists =
+      await this.categoryQueryRepository.findAllByIds(categoriesIds)
+
+    if (categoriesExists.length !== categoriesIds.length) {
+      throw new Error('Category not found')
+    }
+    // check if restaurant exists
+    const found = await this.queryRepository.findByTitleAndUserId(
+      restaurant.title,
+      restaurant.user.id
+    )
+    if (found) {
+      throw new Error('Restaurant already exists')
+    }
+    // 5 - return restaurant
+    return await this.createRepository.execute(restaurant)
   }
 
   async findAll(): Promise<RestaurantModel[]> {
