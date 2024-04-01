@@ -1,5 +1,5 @@
-import { CategoryCreateDto } from '@/category/presenters/http/dto/category.create.dto'
-import { Injectable } from '@nestjs/common'
+import { CategoryDto } from '@/category/presenters/http/dto/category.dto'
+import { Injectable, Logger } from '@nestjs/common'
 import { CategoryFactory } from '../infrastructure/database/prisma/factories/category.factory'
 import { CategoryModel } from '../model/category.model'
 import { CategoryCreateRepository } from './ports/category.create.repository'
@@ -7,38 +7,40 @@ import { CategoryQueriesRepository } from './ports/category.queries.repository'
 
 @Injectable()
 export class CategoryService {
+  private readonly logger = new Logger(CategoryService.name)
   constructor(
-    private readonly create: CategoryCreateRepository,
-    private readonly query: CategoryQueriesRepository
+    private readonly createRepository: CategoryCreateRepository,
+    private readonly queryRepository: CategoryQueriesRepository
   ) {}
 
-  async execute(_categoryDto: CategoryCreateDto): Promise<CategoryModel> {
+  async create(_category: CategoryDto): Promise<CategoryModel> {
     //rules and validations that needs to check before saving the category
     // 1 - check if the restaurant exists
 
     // 2 - check if the category already exists for that restaurant
-    const found = this.query.findByTitleAndResturantId(
-      _categoryDto.title,
-      _categoryDto.restaurantId
+    const found = await this.queryRepository.findByTitleAndResturantId(
+      _category.title,
+      _category.restaurant.id
     )
     if (found) throw new Error('Category already exists')
 
-    const result = await this.create.execute(_categoryDto)
-    return CategoryFactory.toModel(result)
+    const result = await this.createRepository.execute(_category)
+    this.logger.log('Category created', result)
+    return CategoryFactory.toModelCreated(result)
   }
 
   async findById(categoryId: number): Promise<CategoryModel> {
     // adding cache here
-    return await this.query.findById(categoryId)
+    return await this.queryRepository.findById(categoryId)
   }
 
   async findAll(): Promise<CategoryModel[]> {
     // adding cache here
-    return await this.query.findAll()
+    return await this.queryRepository.findAll()
   }
 
   async findAllByRestaurantId(restaurantId: number): Promise<CategoryModel[]> {
     // adding cache here
-    return await this.query.findAllByRestaurantId(restaurantId)
+    return await this.queryRepository.findAllByRestaurantId(restaurantId)
   }
 }

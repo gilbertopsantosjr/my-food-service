@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
 import { CategoryModule } from './category/application/category.module'
+import { RestaurantModule } from './restaurant/application/restaurant.module'
 
 @Module({
-  imports: [ConfigModule.forRoot(), CategoryModule]
+  imports: [CategoryModule, RestaurantModule]
 })
 export class AppModule {}

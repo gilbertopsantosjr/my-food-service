@@ -1,7 +1,8 @@
 import { CategoryCreateRepository } from '@/category/application/ports/category.create.repository'
 import { CategoryQueriesRepository } from '@/category/application/ports/category.queries.repository'
-import { PrismaService } from '@core/databases/prisma/prisma.service'
+import { PrismaModule } from '@core/databases/prisma/prisma.module'
 import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import {
   CategoryCreatePrismaRepository,
   CategoryQueriesPrismaRepository
@@ -9,14 +10,11 @@ import {
 
 @Module({})
 export class CategoryPrismaModule {
-  static forRoot(prismaService: PrismaService | any) {
+  static forRoot() {
     return {
       module: CategoryPrismaModule,
+      imports: [ConfigModule.forRoot(), PrismaModule.register()],
       providers: [
-        {
-          provide: PrismaService,
-          useValue: prismaService
-        },
         {
           provide: CategoryCreateRepository,
           useClass: CategoryCreatePrismaRepository

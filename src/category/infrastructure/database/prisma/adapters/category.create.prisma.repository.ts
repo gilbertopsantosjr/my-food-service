@@ -3,7 +3,6 @@ import { CategoryCreateRepository } from '@/category/application/ports/category.
 import { CategoryModel } from '@/category/model/category.model'
 import { PrismaService } from '@core/databases/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
-import { Category } from '@prisma/client'
 import { CategoryFactory } from '../factories/category.factory'
 
 //Adapter
@@ -13,10 +12,13 @@ export class CategoryCreatePrismaRepository
 {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async execute(category: CategoryModel): Promise<Category> {
-    const toPersist = CategoryFactory.toPersist(category)
+  async execute(category: CategoryModel): Promise<CategoryModel> {
+    const toPersist = CategoryFactory.toCreate(category)
     return await this.prismaService.category.create({
-      data: toPersist
+      data: toPersist,
+      include: {
+        restaurants: true
+      }
     })
   }
 }

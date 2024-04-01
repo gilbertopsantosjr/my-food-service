@@ -3,7 +3,7 @@ import { CategoryModel } from '@/category/model/category.model'
 /* use abstract class as javascript doesnt have interfaces for DI*/
 export abstract class CategoryQueriesRepository {
   abstract findByTitleAndResturantId(
-    name: string,
+    title: string,
     restaurantId: number
   ): Promise<CategoryModel>
   abstract findById(categoryId: number): Promise<CategoryModel>
