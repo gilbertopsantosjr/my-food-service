@@ -1,3 +1,4 @@
+import { ValidationError } from '@core/errors/validation.error'
 import {
   ArgumentsHost,
   Catch,
@@ -9,6 +10,14 @@ import {
 import { AbstractHttpAdapter, HttpAdapterHost } from '@nestjs/core'
 import { exceptionShortMessage } from './util.exception.filter'
 
+type Result = {
+  status: number
+  timestamp: string
+  message: string | object
+  errors?: any
+  path?: string
+}
+
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger: Logger = new Logger(AllExceptionsFilter.name)
@@ -19,28 +28,53 @@ export class AllExceptionsFilter implements ExceptionFilter {
     this.httpAdapter = adapterHost.httpAdapter
   }
 
+  private catchHttpException(exception: HttpException): Result {
+    return {
+      status: exception.getStatus(),
+      timestamp: new Date().toISOString(),
+      message: exception.getResponse()
+    } satisfies Result
+  }
+
+  private catchValidationException(exception: ValidationError): Result {
+    return {
+      status: 400,
+      timestamp: new Date().toISOString(),
+      message: `Validation error: ${exception.message}`,
+      errors: exception.issue
+    } satisfies Result
+  }
+
   catch(exception: Error, host: ArgumentsHost) {
     const context = host.switchToHttp()
     const request = context.getRequest()
     const response = context.getResponse()
+    let result: Result = null
 
-    const { status, body } =
-      exception instanceof HttpException
-        ? {
-            status: exception.getStatus(),
-            body: exception.getResponse()
-          }
-        : {
-            status: HttpStatus.INTERNAL_SERVER_ERROR,
-            body: {
-              statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-              timestamp: new Date().toISOString(),
-              message: exceptionShortMessage(exception.message),
-              path: request.path
-            }
-          }
+    if (exception instanceof HttpException) {
+      result = this.catchHttpException(exception)
+    } else if (exception instanceof ValidationError) {
+      result = this.catchValidationException(exception)
+    } else {
+      result = {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        timestamp: new Date().toISOString(),
+        message: exceptionShortMessage(exception.message)
+      }
+    }
 
-    this.logger.error(`an error `, { body, status })
-    this.httpAdapter.reply(response, body, status)
+    result = { ...result, path: request.path }
+
+    this.logger.error(`an error `, {
+      message: result.message,
+      status: result.status,
+      errors: result.errors
+    })
+
+    this.httpAdapter.reply(
+      response,
+      { message: result.message, errors: result.errors },
+      result.status
+    )
   }
 }

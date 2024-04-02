@@ -9,15 +9,17 @@ export type CategoriesWithRestaurantes = Prisma.CategoryGetPayload<{
   }
 }>
 
-const categorySchema = z.object({
+const responseSchema = z.object({
+  id: z.number(),
   title: z.string(),
   description: z.string(),
-  restaurant: z.object({
-    id: z.number()
-  }),
-  user: z.object({
-    id: z.number()
-  })
+  createdAt: z.date(),
+  restaurants: z.array(
+    z.object({
+      id: z.number(),
+      title: z.string()
+    })
+  )
 })
 
 const schema = z.object({
@@ -29,7 +31,7 @@ const schema = z.object({
 
 export class CategoryFactory {
   static toCreate(dto: CategoryModel): Prisma.CategoryCreateInput {
-    const val = categorySchema.safeParse(dto)
+    const val = responseSchema.safeParse(dto)
 
     if (val.success === false) {
       throw new ValidationError(
@@ -42,7 +44,7 @@ export class CategoryFactory {
       title: dto.title,
       description: dto.description,
       restaurants: {
-        connect: { id: dto.restaurant.id }
+        connect: { id: dto.restaurants.id }
       }
     } satisfies Prisma.CategoryCreateInput
   }
@@ -66,9 +68,10 @@ export class CategoryFactory {
   }
 
   static toModel(entity: CategoriesWithRestaurantes): CategoryModel {
-    const val = categorySchema.safeParse(entity)
+    const val = responseSchema.safeParse(entity)
 
     if (val.success === false) {
+      console.log(entity)
       throw new ValidationError(
         `can not factory a model toModel`,
         val.error.flatten()
@@ -80,7 +83,7 @@ export class CategoryFactory {
       title: entity.title,
       description: entity.description,
       createdAt: entity.createdAt,
-      restaurant: {
+      restaurants: {
         id: entity.restaurants[0].id,
         title: entity.restaurants[0].title
       }

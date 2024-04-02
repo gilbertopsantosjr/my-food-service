@@ -14,12 +14,19 @@ export class CategoryCreatePrismaRepository
   constructor(private readonly prismaService: PrismaService) {}
 
   async execute(category: CategoryModel): Promise<CategoryModel> {
-    const toPersist = CategoryFactory.toCreate(category)
-    return await this.prismaService.category.create({
-      data: toPersist,
-      include: {
-        restaurants: true
-      }
-    })
+    try {
+      const toPersist = CategoryFactory.toCreate(category)
+      const result = await this.prismaService.category.create({
+        data: toPersist,
+        include: {
+          restaurants: true
+        }
+      })
+      this.logger.log(`Category created: ${result.id}`)
+      return result ? CategoryFactory.toModel(result) : null
+    } catch (error) {
+      this.logger.error(error)
+      throw error
+    }
   }
 }
