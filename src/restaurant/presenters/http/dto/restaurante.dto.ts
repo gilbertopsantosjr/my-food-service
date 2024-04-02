@@ -1,5 +1,7 @@
+import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
+  IsDate,
   IsDefined,
   IsNotEmptyObject,
   IsNumber,
@@ -18,15 +20,23 @@ class Category {
 export class RestaurantDto {
   @IsString()
   @IsDefined()
+  @ApiProperty({})
   title: string
 
   @IsString()
   @IsDefined()
+  @ApiProperty({})
   content: string
 
-  @IsString()
+  @IsDate()
+  @ApiProperty({
+    type: Date
+  })
   createAt: Date
 
+  @ApiProperty({
+    type: Boolean
+  })
   published: boolean
 
   @IsNotEmptyObject()

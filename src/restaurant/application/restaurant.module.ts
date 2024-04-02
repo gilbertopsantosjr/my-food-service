@@ -6,13 +6,19 @@ import { ConfigModule } from '@nestjs/config'
 import { RestaurantCreatePrismaRepository } from '../infrastructure/database/prisma/adapters/restaurant.create.prisma.repository'
 import { RestaurantQueriesPrismaRepository } from '../infrastructure/database/prisma/adapters/restaurant.queries.prisma.repository'
 import { RestaurantCreateController } from '../presenters/http/restaurant.create.controller'
+import { GetRestaurantByIdController } from '../presenters/http/restaurant.getById.controller'
+import { GetRestaurantListAllController } from '../presenters/http/restaurant.list.controller'
 import { RestaurantCreateRepository } from './ports/restaurant.create.repository'
 import { RestaurantQueriesRepository } from './ports/restaurant.queries.repository'
 import { RestaurantService } from './restaurant.service'
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule.register()],
-  controllers: [RestaurantCreateController],
+  controllers: [
+    RestaurantCreateController,
+    GetRestaurantListAllController,
+    GetRestaurantByIdController
+  ],
   providers: [
     {
       provide: RestaurantCreateRepository,

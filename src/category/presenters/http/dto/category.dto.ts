@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   IsDefined,
@@ -16,15 +17,18 @@ class Restaurant {
 export class CategoryDto {
   @IsString()
   @IsDefined()
+  @ApiProperty()
   title: string
 
   @IsString()
+  @ApiProperty()
   description: string
 
   @IsNotEmptyObject()
   @IsObject()
   @ValidateNested({ each: true })
   @Type(() => Restaurant)
+  @ApiProperty({ type: () => Restaurant })
   restaurant: Restaurant
 }
 
