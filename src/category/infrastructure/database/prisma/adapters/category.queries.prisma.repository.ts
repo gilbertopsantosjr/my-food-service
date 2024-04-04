@@ -15,7 +15,7 @@ export class CategoryQueriesPrismaRepository
 
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findAllByIds(categoryIds: number[]): Promise<CategoryModel[]> {
+  async findAllByIds(categoryIds: number[]): Promise<CategoryModel[] | []> {
     try {
       const entities = await this.prismaService.category.findMany({
         include: {
@@ -39,7 +39,7 @@ export class CategoryQueriesPrismaRepository
   async findByTitleAndResturantId(
     title: string,
     restaurantId: number
-  ): Promise<CategoryModel> {
+  ): Promise<CategoryModel | null> {
     try {
       const result = await this.prismaService.category.findFirst({
         where: {
@@ -59,7 +59,7 @@ export class CategoryQueriesPrismaRepository
     }
   }
 
-  async findById(categoryId: number): Promise<CategoryModel> {
+  async findById(categoryId: number): Promise<CategoryModel | null> {
     try {
       const result = await this.prismaService.category.findUnique({
         where: { id: categoryId },
@@ -74,7 +74,7 @@ export class CategoryQueriesPrismaRepository
     }
   }
 
-  async findAll(): Promise<CategoryModel[]> {
+  async findAll(): Promise<CategoryModel[] | []> {
     try {
       const entities = await this.prismaService.category.findMany({
         include: {
@@ -90,7 +90,9 @@ export class CategoryQueriesPrismaRepository
     }
   }
 
-  async findAllByRestaurantId(restaurantId: number): Promise<CategoryModel[]> {
+  async findAllByRestaurantId(
+    restaurantId: number
+  ): Promise<CategoryModel[] | []> {
     try {
       const entities = await this.prismaService.category.findMany({
         where: {

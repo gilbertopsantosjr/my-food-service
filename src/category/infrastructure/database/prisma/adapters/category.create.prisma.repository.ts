@@ -13,7 +13,7 @@ export class CategoryCreatePrismaRepository
   private readonly logger = new Logger(CategoryCreatePrismaRepository.name)
   constructor(private readonly prismaService: PrismaService) {}
 
-  async execute(category: CategoryModel): Promise<CategoryModel> {
+  async execute(category: CategoryModel): Promise<CategoryModel | null> {
     try {
       const toPersist = CategoryFactory.toCreate(category)
       const result = await this.prismaService.category.create({

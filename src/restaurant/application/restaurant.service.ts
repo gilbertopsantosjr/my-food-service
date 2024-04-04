@@ -14,7 +14,9 @@ export class RestaurantService {
     private readonly categoryQueryRepository: CategoryQueriesRepository
   ) {}
 
-  async create(restaurant: RestaurantWithUser): Promise<RestaurantModel> {
+  async create(
+    restaurant: RestaurantWithUser
+  ): Promise<RestaurantModel | null> {
     //rules
     // check if categories exists
     const categoriesIds = restaurant.categories.map((item) => item.id)
@@ -33,7 +35,9 @@ export class RestaurantService {
       throw new Error('Restaurant already exists')
     }
     // 5 - return restaurant
-    return await this.createRepository.execute(restaurant)
+    const result = await this.createRepository.execute(restaurant)
+    this.logger.log('Restaurant created', result)
+    return result
   }
 
   async findAll(): Promise<RestaurantModel[]> {
@@ -41,7 +45,7 @@ export class RestaurantService {
     return await this.queryRepository.findAll()
   }
 
-  async findById(id: number): Promise<RestaurantModel> {
+  async findById(id: number): Promise<RestaurantModel | null> {
     // adding cache here
     return await this.queryRepository.findById(id)
   }
@@ -49,11 +53,12 @@ export class RestaurantService {
   async update(
     id: string,
     restaurant: RestaurantModel
-  ): Promise<RestaurantModel> {
+  ): Promise<RestaurantModel | null> {
+    this.logger.log('Restaurant updated', {})
     return null
   }
 
-  async delete(id: string): Promise<RestaurantModel> {
+  async delete(id: string): Promise<RestaurantModel | null> {
     return null
   }
 }

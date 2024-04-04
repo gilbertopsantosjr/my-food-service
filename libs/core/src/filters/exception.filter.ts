@@ -49,7 +49,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const context = host.switchToHttp()
     const request = context.getRequest()
     const response = context.getResponse()
-    let result: Result = null
+    let result: Result
 
     if (exception instanceof HttpException) {
       result = this.catchHttpException(exception)

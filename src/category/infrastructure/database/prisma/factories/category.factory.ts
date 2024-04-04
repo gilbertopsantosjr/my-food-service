@@ -1,7 +1,5 @@
 import { CategoryModel } from '@/category/model/category.model'
-import { ValidationError } from '@core/errors/validation.error'
 import { Prisma } from '@prisma/client'
-import { z } from 'zod'
 
 export type CategoriesWithRestaurantes = Prisma.CategoryGetPayload<{
   include: {
@@ -9,56 +7,18 @@ export type CategoriesWithRestaurantes = Prisma.CategoryGetPayload<{
   }
 }>
 
-const responseSchema = z.object({
-  id: z.number(),
-  title: z.string(),
-  description: z.string(),
-  createdAt: z.date(),
-  restaurants: z.array(
-    z.object({
-      id: z.number(),
-      title: z.string()
-    })
-  )
-})
-
-const schema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string(),
-  createAt: z.date()
-})
-
 export class CategoryFactory {
   static toCreate(dto: CategoryModel): Prisma.CategoryCreateInput {
-    const val = responseSchema.safeParse(dto)
-
-    if (val.success === false) {
-      throw new ValidationError(
-        `can not factory a model toPersist`,
-        val.error.flatten()
-      )
-    }
-
     return {
       title: dto.title,
       description: dto.description,
       restaurants: {
-        connect: { id: dto.restaurants.id }
+        connect: { id: dto.restaurants?.id }
       }
     } satisfies Prisma.CategoryCreateInput
   }
 
   static toModelCreated(entity: CategoryModel): CategoryModel {
-    const val = schema.safeParse(entity)
-
-    if (val.success === false) {
-      throw new ValidationError(
-        `can not factory a model toModelCreated`,
-        val.error.flatten()
-      )
-    }
-
     return {
       id: entity.id,
       title: entity.title,
@@ -68,16 +28,6 @@ export class CategoryFactory {
   }
 
   static toModel(entity: CategoriesWithRestaurantes): CategoryModel {
-    const val = responseSchema.safeParse(entity)
-
-    if (val.success === false) {
-      console.log(entity)
-      throw new ValidationError(
-        `can not factory a model toModel`,
-        val.error.flatten()
-      )
-    }
-
     return {
       id: entity.id,
       title: entity.title,

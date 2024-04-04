@@ -1,35 +1,38 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Type } from 'class-transformer'
-import {
-  IsDefined,
-  IsNotEmptyObject,
-  IsObject,
-  IsString,
-  ValidateNested
-} from 'class-validator'
+import { z } from 'zod'
+
+export const CreateCategorySchema = z.object({
+  title: z.string().min(3).max(55),
+  description: z.string().min(3).max(255),
+  restaurants: z.object({
+    id: z.number()
+  })
+})
+
+export const UpdateCategorySchema = z.object({
+  id: z.number().optional(),
+  title: z.string().min(3).max(55),
+  description: z.string().min(3).max(255),
+  restaurants: z.object({
+    id: z.number()
+  })
+})
 
 class Restaurant {
-  id: number
-  name?: string
+  @ApiProperty()
+  id!: number
 }
 
 // validate
 export class CategoryDto {
-  @IsString()
-  @IsDefined()
   @ApiProperty()
-  title: string
+  title!: string
 
-  @IsString()
   @ApiProperty()
-  description: string
+  description!: string
 
-  @IsNotEmptyObject()
-  @IsObject()
-  @ValidateNested({ each: true })
-  @Type(() => Restaurant)
   @ApiProperty({ type: () => Restaurant })
-  restaurant: Restaurant
+  restaurants!: Restaurant
 }
 
 export type CategoryWithId = Partial<CategoryDto> & {

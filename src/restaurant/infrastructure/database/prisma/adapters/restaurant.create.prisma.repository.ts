@@ -13,8 +13,11 @@ export class RestaurantCreatePrismaRepository
 {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async execute(restaurant: RestaurantWithUser): Promise<RestaurantModel> {
+  async execute(
+    restaurant: RestaurantWithUser
+  ): Promise<RestaurantModel | null> {
     const toPersist = RestaurantFactory.toCreate(restaurant)
+    console.log(toPersist)
     const result = await this.prismaService.restaurant.create({
       data: toPersist,
       include: {

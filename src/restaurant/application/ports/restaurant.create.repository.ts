@@ -5,5 +5,5 @@ import { RestaurantWithUser } from '@/restaurant/presenters/http/dto/restaurante
 export abstract class RestaurantCreateRepository {
   abstract execute(
     category: Partial<RestaurantWithUser>
-  ): Promise<RestaurantModel>
+  ): Promise<RestaurantModel | null>
 }

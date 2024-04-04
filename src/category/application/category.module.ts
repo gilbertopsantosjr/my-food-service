@@ -1,4 +1,6 @@
 import { CategoryCreateController } from '@/category/presenters/http/category.create.controller'
+import { RestaurantQueriesRepository } from '@/restaurant/application/ports/restaurant.queries.repository'
+import { RestaurantQueriesPrismaRepository } from '@/restaurant/infrastructure/database/prisma/adapters/restaurant.queries.prisma.repository'
 import { PrismaModule } from '@core/databases/prisma/prisma.module'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
@@ -27,6 +29,10 @@ import { CategoryQueriesRepository } from './ports/category.queries.repository'
     {
       provide: CategoryQueriesRepository,
       useClass: CategoryQueriesPrismaRepository
+    },
+    {
+      provide: RestaurantQueriesRepository,
+      useClass: RestaurantQueriesPrismaRepository
     },
     CategoryService
   ],

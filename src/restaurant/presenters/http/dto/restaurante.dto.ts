@@ -1,53 +1,50 @@
+import { createZodDto } from '@anatine/zod-nestjs'
+import { extendApi } from '@anatine/zod-openapi'
 import { ApiProperty } from '@nestjs/swagger'
-import { Type } from 'class-transformer'
-import {
-  IsDate,
-  IsDefined,
-  IsNotEmptyObject,
-  IsNumber,
-  IsObject,
-  IsString,
-  ValidateNested
-} from 'class-validator'
+import { z } from 'zod'
 
 class Category {
-  @IsDefined()
-  @IsNumber()
+  @ApiProperty({ type: Number })
   id: number
-  title?: string
 }
 
 export class RestaurantDto {
-  @IsString()
-  @IsDefined()
+  @ApiProperty({})
+  id: number
+
   @ApiProperty({})
   title: string
 
-  @IsString()
-  @IsDefined()
   @ApiProperty({})
   content: string
-
-  @IsDate()
-  @ApiProperty({
-    type: Date
-  })
-  createAt: Date
 
   @ApiProperty({
     type: Boolean
   })
   published: boolean
 
-  @IsNotEmptyObject()
-  @IsObject()
-  @ValidateNested({ each: true })
-  @Type(() => Category)
-  categories: [Category]
+  @ApiProperty({ type: [Category] })
+  categories: Category[]
 }
 
-export type RestaurantWithUser = Partial<RestaurantDto> & {
-  user: {
-    id: number
-  }
+export const RestaurantSchema = extendApi(
+  z.object({
+    id: z.number(),
+    title: z.string().min(3).max(55),
+    content: z.string().min(3).max(255),
+    published: z.boolean().optional(),
+    categories: z.array(
+      z.object({
+        id: z.number()
+      })
+    )
+  })
+)
+
+export class CreateRestaurantDto extends createZodDto(
+  RestaurantSchema.omit({ id: true })
+) {}
+
+export type RestaurantWithUser = CreateRestaurantDto & {
+  user: { id: number }
 }

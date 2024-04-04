@@ -5,9 +5,11 @@ export abstract class CategoryQueriesRepository {
   abstract findByTitleAndResturantId(
     title: string,
     restaurantId: number
-  ): Promise<CategoryModel>
-  abstract findById(categoryId: number): Promise<CategoryModel>
-  abstract findAll(): Promise<CategoryModel[]>
-  abstract findAllByIds(categoryIds: number[]): Promise<CategoryModel[]>
-  abstract findAllByRestaurantId(restaurantId: number): Promise<CategoryModel[]>
+  ): Promise<CategoryModel | null>
+  abstract findById(categoryId: number): Promise<CategoryModel | null>
+  abstract findAll(): Promise<CategoryModel[] | []>
+  abstract findAllByIds(categoryIds: number[]): Promise<CategoryModel[] | []>
+  abstract findAllByRestaurantId(
+    restaurantId: number
+  ): Promise<CategoryModel[] | []>
 }

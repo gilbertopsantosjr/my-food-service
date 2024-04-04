@@ -1,18 +1,7 @@
 import { CategoryModel } from '@/category/model/category.model'
 import { RestaurantModel } from '@/restaurant/model/restaurant.model'
 import { RestaurantWithUser } from '@/restaurant/presenters/http/dto/restaurante.dto'
-import { ValidationError } from '@core/errors/validation.error'
 import { Prisma } from '@prisma/client'
-import { z } from 'zod'
-
-const schema = z.object({
-  title: z.string(),
-  content: z.string(),
-  published: z.boolean(),
-  user: z.object({
-    id: z.number()
-  })
-})
 
 export type RestaurantesWithCategories = Prisma.RestaurantGetPayload<{
   include: {
@@ -45,15 +34,6 @@ export class RestaurantFactory {
   }
 
   static toCreate(dto: RestaurantWithUser): Prisma.RestaurantCreateInput {
-    const val = schema.safeParse(dto)
-
-    if (val.success === false) {
-      throw new ValidationError(
-        `can not factory a model toPersist`,
-        val.error.flatten()
-      )
-    }
-
     return {
       title: dto.title,
       content: dto.content,
@@ -62,7 +42,9 @@ export class RestaurantFactory {
         connect: { id: dto.user.id }
       },
       categories: {
-        connect: dto.categories
+        connect: dto.categories.map((item) => {
+          return { id: item.id }
+        })
       }
     } satisfies Prisma.RestaurantCreateInput
   }
