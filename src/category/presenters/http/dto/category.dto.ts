@@ -1,40 +1,23 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { createZodDto } from '@anatine/zod-nestjs'
+import { extendApi } from '@anatine/zod-openapi'
 import { z } from 'zod'
 
-export const CreateCategorySchema = z.object({
-  title: z.string().min(3).max(55),
-  description: z.string().min(3).max(255),
-  restaurants: z.object({
-    id: z.number()
+export const CategorySchema = extendApi(
+  z.object({
+    id: z.number(),
+    title: z.string().min(3).max(55),
+    description: z.string().min(3).max(255),
+    createdAt: z.date().optional(),
+    restaurants: z.object({
+      id: z.number()
+    })
   })
-})
+)
 
-export const UpdateCategorySchema = z.object({
-  id: z.number().optional(),
-  title: z.string().min(3).max(55),
-  description: z.string().min(3).max(255),
-  restaurants: z.object({
-    id: z.number()
-  })
-})
+export class CreateCategoryDto extends createZodDto(
+  CategorySchema.omit({ id: true })
+) {}
 
-class Restaurant {
-  @ApiProperty()
-  id!: number
-}
+export class UpdateCategoryDto extends createZodDto(CategorySchema) {}
 
-// validate
-export class CategoryDto {
-  @ApiProperty()
-  title!: string
-
-  @ApiProperty()
-  description!: string
-
-  @ApiProperty({ type: () => Restaurant })
-  restaurants!: Restaurant
-}
-
-export type CategoryWithId = Partial<CategoryDto> & {
-  id: number
-}
+export class ResponseCategoryDto extends createZodDto(CategorySchema) {}

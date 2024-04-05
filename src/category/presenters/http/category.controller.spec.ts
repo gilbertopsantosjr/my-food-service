@@ -4,7 +4,7 @@ import { CategoryModel } from '@/category/model/category.model'
 import { faker } from '@faker-js/faker'
 import { Test, TestingModule } from '@nestjs/testing'
 import { CategoryCreateController } from './category.create.controller'
-import { CategoryDto } from './dto'
+import { CreateCategoryDto } from './dto/category.dto'
 
 describe('CategoryCreateControllerTest', () => {
   let controller: CategoryCreateController
@@ -25,16 +25,19 @@ describe('CategoryCreateControllerTest', () => {
 
   it('should call categoryService.execute with valid categoryDto', async () => {
     const title = faker.lorem.word()
-    const categoryDto = new CategoryDto()
+    const restaurantId = faker.number.int()
+    const categoryDto = new CreateCategoryDto()
     categoryDto.title = title
-    categoryDto.restaurant.id = 1
+    categoryDto.restaurants = {
+      id: restaurantId
+    }
 
     const categoryServiceMock = jest
-      .spyOn(categoryService, 'execute')
+      .spyOn(categoryService, 'create')
       .mockResolvedValueOnce({
         title: title,
-        restaurant: {
-          id: faker.number.int()
+        restaurants: {
+          id: restaurantId
         }
       } as CategoryModel)
 

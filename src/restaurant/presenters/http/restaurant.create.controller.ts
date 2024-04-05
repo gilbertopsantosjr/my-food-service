@@ -1,9 +1,11 @@
-import { Body, Controller, Logger, Post, UsePipes } from '@nestjs/common'
-
 import { RestaurantService } from '@/restaurant/application/restaurant.service'
 import { ZodValidationPipe } from '@anatine/zod-nestjs'
+import { Body, Controller, Logger, Post, UsePipes } from '@nestjs/common'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
-import { CreateRestaurantDto, RestaurantDto } from './dto/restaurante.dto'
+import {
+  CreateRestaurantDto,
+  ResponseRestaurantDto
+} from './dto/restaurante.dto'
 
 @Controller('restaurant')
 export class RestaurantCreateController {
@@ -16,7 +18,7 @@ export class RestaurantCreateController {
   @ApiResponse({
     status: 201,
     description: 'The restaurant has been successfully created.',
-    type: RestaurantDto
+    type: ResponseRestaurantDto
   })
   async execute(@Body() restaurantDto: CreateRestaurantDto) {
     this.logger.log('Creating a restaurant', restaurantDto)

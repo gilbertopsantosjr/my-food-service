@@ -3,13 +3,22 @@ import { CategoryQueriesPrismaRepository } from '@/category/infrastructure/datab
 import { PrismaModule } from '@core/databases/prisma/prisma.module'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { RestaurantCreatePrismaRepository } from '../infrastructure/database/prisma/adapters/restaurant.create.prisma.repository'
-import { RestaurantQueriesPrismaRepository } from '../infrastructure/database/prisma/adapters/restaurant.queries.prisma.repository'
-import { RestaurantCreateController } from '../presenters/http/restaurant.create.controller'
-import { GetRestaurantByIdController } from '../presenters/http/restaurant.getById.controller'
-import { GetRestaurantListAllController } from '../presenters/http/restaurant.list.controller'
-import { RestaurantCreateRepository } from './ports/restaurant.create.repository'
-import { RestaurantQueriesRepository } from './ports/restaurant.queries.repository'
+import {
+  RestaurantCreatePrismaRepository,
+  RestaurantQueriesPrismaRepository,
+  RestaurantUpdatePrismaRepository
+} from '../infrastructure/database/prisma/adapters'
+import {
+  GetRestaurantByIdController,
+  GetRestaurantListAllController,
+  RestaurantCreateController
+} from '../presenters/http/'
+import {
+  RestaurantCreateRepository,
+  RestaurantQueriesRepository,
+  RestaurantUpdateRepository
+} from './ports'
+// TODO fazer um pequeno video sobre paths e alias
 import { RestaurantService } from './restaurant.service'
 
 @Module({
@@ -31,6 +40,10 @@ import { RestaurantService } from './restaurant.service'
     {
       provide: CategoryQueriesRepository,
       useClass: CategoryQueriesPrismaRepository
+    },
+    {
+      provide: RestaurantUpdateRepository,
+      useClass: RestaurantUpdatePrismaRepository
     },
     RestaurantService
   ]

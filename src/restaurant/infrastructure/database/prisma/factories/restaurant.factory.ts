@@ -33,7 +33,7 @@ export class RestaurantFactory {
     } satisfies RestaurantModel
   }
 
-  static toCreate(dto: RestaurantWithUser): Prisma.RestaurantCreateInput {
+  static toPersist(dto: RestaurantWithUser): Prisma.RestaurantCreateInput {
     return {
       title: dto.title,
       content: dto.content,

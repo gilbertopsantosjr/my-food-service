@@ -1,4 +1,3 @@
-import { ValidationError } from '@core/errors/validation.error'
 import {
   ArgumentsHost,
   Catch,
@@ -36,15 +35,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     } satisfies Result
   }
 
-  private catchValidationException(exception: ValidationError): Result {
-    return {
-      status: 400,
-      timestamp: new Date().toISOString(),
-      message: `Validation error: ${exception.message}`,
-      errors: exception.issue
-    } satisfies Result
-  }
-
   catch(exception: Error, host: ArgumentsHost) {
     const context = host.switchToHttp()
     const request = context.getRequest()
@@ -53,8 +43,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       result = this.catchHttpException(exception)
-    } else if (exception instanceof ValidationError) {
-      result = this.catchValidationException(exception)
     } else {
       result = {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
