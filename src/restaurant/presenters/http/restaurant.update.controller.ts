@@ -9,13 +9,14 @@ import {
   Put,
   UsePipes
 } from '@nestjs/common'
-import { ApiOperation, ApiResponse } from '@nestjs/swagger'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import {
   ResponseRestaurantDto,
   UpdateRestaurantDto
 } from './dto/restaurante.dto'
 
 @Controller('restaurant')
+@ApiTags('restaurant')
 export class RestaurantUpdateController {
   private readonly logger = new Logger(RestaurantUpdateController.name)
   constructor(private readonly restaurantService: RestaurantService) {}

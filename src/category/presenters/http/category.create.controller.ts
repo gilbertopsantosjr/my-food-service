@@ -9,7 +9,7 @@ import {
   Post,
   UsePipes
 } from '@nestjs/common'
-import { ApiOperation, ApiResponse } from '@nestjs/swagger'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import {
   DuplicateError,
   NotFoundError
@@ -17,12 +17,13 @@ import {
 import { CreateCategoryDto, ResponseCategoryDto } from './dto/category.dto'
 
 @Controller('category')
+@ApiTags('category')
 export class CategoryCreateController {
   private readonly logger = new Logger(CategoryCreateController.name)
   constructor(private readonly categoryService: CategoryService) {}
   @Post()
   @UsePipes(ZodValidationPipe)
-  @ApiOperation({ summary: 'Create a restaurant' })
+  @ApiOperation({ summary: 'Create a category for restaurant' })
   @ApiResponse({
     status: 201,
     description: 'The category has been successfully created.',
@@ -30,13 +31,11 @@ export class CategoryCreateController {
   })
   @ApiResponse({
     status: 404,
-    description: 'The restaurant for this category has been not found.',
-    type: ResponseCategoryDto
+    description: 'The restaurant for this category has been not found.'
   })
   @ApiResponse({
     status: 400,
-    description: 'There is already this category for this restaurant.',
-    type: ResponseCategoryDto
+    description: 'Duplicated category for this restaurant.'
   })
   async execute(@Body() categoryDto: CreateCategoryDto) {
     try {

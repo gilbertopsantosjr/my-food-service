@@ -11,7 +11,8 @@ import {
 import {
   GetRestaurantByIdController,
   GetRestaurantListAllController,
-  RestaurantCreateController
+  RestaurantCreateController,
+  RestaurantUpdateController
 } from '../presenters/http/'
 import {
   RestaurantCreateRepository,
@@ -19,6 +20,7 @@ import {
   RestaurantUpdateRepository
 } from './ports'
 // TODO fazer um pequeno video sobre paths e alias
+import { RestaurantDeleteController } from '../presenters/http/restaurant.delete.controller'
 import { RestaurantService } from './restaurant.service'
 
 @Module({
@@ -26,7 +28,9 @@ import { RestaurantService } from './restaurant.service'
   controllers: [
     RestaurantCreateController,
     GetRestaurantListAllController,
-    GetRestaurantByIdController
+    GetRestaurantByIdController,
+    RestaurantUpdateController,
+    RestaurantDeleteController
   ],
   providers: [
     {

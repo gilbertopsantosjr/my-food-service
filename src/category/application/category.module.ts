@@ -15,6 +15,8 @@ import {
   CategoryListAllController,
   GetCategoryByIdController
 } from '../presenters/http'
+import { CategoryDeleteController } from '../presenters/http/category.delete.controller'
+import { CategoryUpdateController } from '../presenters/http/category.update.controller'
 import { CategoryService } from './category.service'
 import {
   CategoryCreateRepository,
@@ -28,7 +30,9 @@ import {
   controllers: [
     CategoryCreateController,
     CategoryListAllController,
-    GetCategoryByIdController
+    GetCategoryByIdController,
+    CategoryUpdateController,
+    CategoryDeleteController
   ],
   providers: [
     {

@@ -8,10 +8,11 @@ import {
   Param,
   ParseIntPipe
 } from '@nestjs/common'
-import { ApiOperation, ApiResponse } from '@nestjs/swagger'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { NotFoundError } from '@new-developers-group/core-ts-lib'
 
 @Controller('restaurant')
+@ApiTags('restaurant')
 export class RestaurantDeleteController {
   private readonly logger = new Logger(RestaurantDeleteController.name)
   constructor(private readonly restaurantService: RestaurantService) {}

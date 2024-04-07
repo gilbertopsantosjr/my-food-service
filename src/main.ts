@@ -11,7 +11,6 @@ async function bootstrap() {
     .setTitle('My Food Store API')
     .setDescription('The My Food Store API description')
     .setVersion('1.0')
-    .addTag('food')
     .build()
   const document = SwaggerModule.createDocument(app, config)
   SwaggerModule.setup('api', app, document)
