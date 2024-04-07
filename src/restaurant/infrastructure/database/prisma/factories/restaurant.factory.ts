@@ -62,7 +62,7 @@ export class RestaurantFactory {
         },
         categories: {
           connect: dto.categories?.map((item) => {
-            return { id: item.id }
+            return { id: item!.id }
           })
         }
       } satisfies Prisma.RestaurantCreateInput

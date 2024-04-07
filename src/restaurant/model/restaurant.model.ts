@@ -10,9 +10,11 @@ export const RestaurantSchema = extendApi(
     createdAt: z.date().optional(),
     published: z.boolean().optional(),
     categories: z.array(
-      z.object({
-        id: z.number()
-      })
+      z
+        .object({
+          id: z.number()
+        })
+        .optional()
     )
   })
 )
