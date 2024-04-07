@@ -1,15 +1,14 @@
-import {
-  CreateCategoryDto,
-  UpdateCategoryDto
-} from '@/category/presenters/http/dto/category.dto'
 import { RestaurantQueriesRepository } from '@/restaurant/application/ports/restaurant.queries.repository'
 import { Injectable, Logger } from '@nestjs/common'
 import {
   DuplicateError,
   NotFoundError
 } from '@new-developers-group/core-ts-lib'
-import { CategoryFactory } from '../infrastructure/database/prisma/factories/category.factory'
-import { CategoryModel } from '../model/category.model'
+import {
+  CreateCategoryDto,
+  ResponseCategoryDto,
+  UpdateCategoryDto
+} from '../model/category.model'
 import {
   CategoryCreateRepository,
   CategoryDeleteRepository,
@@ -28,7 +27,9 @@ export class CategoryService {
     private readonly restaurantQuery: RestaurantQueriesRepository
   ) {}
 
-  async create(_category: CreateCategoryDto): Promise<CategoryModel | null> {
+  async create(
+    _category: CreateCategoryDto
+  ): Promise<ResponseCategoryDto | null> {
     //rules and validations that needs to check before saving the category
     // 1 - check if the restaurant exists
     const restaurant = await this.restaurantQuery.findById(
@@ -43,29 +44,29 @@ export class CategoryService {
     )
     if (found) throw new DuplicateError('Category already exists')
 
-    const result = await this.createRepository.execute(_category)
-    this.logger.log('Category created', result)
-    return CategoryFactory.toModelCreated(result!)
+    return await this.createRepository.execute(_category)
   }
 
-  async findById(categoryId: number): Promise<CategoryModel | null> {
+  async findById(categoryId: number): Promise<ResponseCategoryDto | null> {
     // adding cache here
     return await this.queryRepository.findById(categoryId)
   }
 
-  async findAll(): Promise<CategoryModel[] | []> {
+  async findAll(): Promise<ResponseCategoryDto[] | []> {
     // adding cache here
     return await this.queryRepository.findAll()
   }
 
   async findAllByRestaurantId(
     restaurantId: number
-  ): Promise<CategoryModel[] | []> {
+  ): Promise<ResponseCategoryDto[] | []> {
     // adding cache here
     return await this.queryRepository.findAllByRestaurantId(restaurantId)
   }
 
-  async update(category: UpdateCategoryDto): Promise<CategoryModel | null> {
+  async update(
+    category: UpdateCategoryDto
+  ): Promise<ResponseCategoryDto | null> {
     const exists = await this.queryRepository.findById(category.id)
     if (!exists) {
       throw new NotFoundError('Restaurant not found')

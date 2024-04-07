@@ -1,4 +1,8 @@
 import { CategoryService } from '@/category/application/category.service'
+import {
+  CreateCategoryDto,
+  ResponseCategoryDto
+} from '@/category/model/category.model'
 import { ZodValidationPipe } from '@anatine/zod-nestjs'
 import {
   BadRequestException,
@@ -14,7 +18,6 @@ import {
   DuplicateError,
   NotFoundError
 } from '@new-developers-group/core-ts-lib'
-import { CreateCategoryDto, ResponseCategoryDto } from './dto/category.dto'
 
 @Controller('category')
 @ApiTags('category')
@@ -37,7 +40,9 @@ export class CategoryCreateController {
     status: 400,
     description: 'Duplicated category for this restaurant.'
   })
-  async execute(@Body() categoryDto: CreateCategoryDto) {
+  async execute(
+    @Body() categoryDto: CreateCategoryDto
+  ): Promise<ResponseCategoryDto | null> {
     try {
       this.logger.log('Creating a category', categoryDto)
       return await this.categoryService.create(categoryDto)

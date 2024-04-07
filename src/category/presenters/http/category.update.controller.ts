@@ -1,7 +1,19 @@
 import { CategoryService } from '@/category/application/category.service'
-import { Body, Controller, Logger, Put } from '@nestjs/common'
+import {
+  ResponseCategoryDto,
+  UpdateCategoryDto
+} from '@/category/model/category.model'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Logger,
+  NotFoundException,
+  Put
+} from '@nestjs/common'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { ResponseCategoryDto, UpdateCategoryDto } from './dto/category.dto'
+import { DuplicateError } from '@new-developers-group/core-ts-lib'
+import { NotFoundError } from 'rxjs'
 
 @Controller('category')
 @ApiTags('category')
@@ -19,8 +31,24 @@ export class CategoryUpdateController {
     status: 404,
     description: 'Category not found.'
   })
-  async execute(@Body() categoryDto: UpdateCategoryDto) {
-    this.logger.log('Updating a category', categoryDto)
-    return await this.categoryService.update(categoryDto)
+  async execute(
+    @Body() categoryDto: UpdateCategoryDto
+  ): Promise<ResponseCategoryDto | null> {
+    try {
+      this.logger.debug('Updating a category', categoryDto)
+      return await this.categoryService.update(categoryDto)
+    } catch (error) {
+      this.logger.error(
+        `Error update a category ${categoryDto.title} for the restaurant: ${categoryDto.restaurants.id}`,
+        error
+      )
+      if (error instanceof NotFoundError) {
+        throw new NotFoundException(error.message)
+      } else if (error instanceof DuplicateError) {
+        throw new BadRequestException(error.message)
+      } else {
+        throw error
+      }
+    }
   }
 }

@@ -31,13 +31,14 @@ export class CategoryDeleteController {
     status: 500,
     description: 'Could not delete the category.'
   })
-  async delete(@Param('id', ParseIntPipe) id: string) {
+  async delete(@Param('id', ParseIntPipe) id: number): Promise<boolean> {
     try {
-      const result = await this.categoryService.delete(+id)
+      const result = await this.categoryService.delete(id)
       if (!result) {
         throw new InternalServerErrorException('Could not delete the category')
       }
       this.logger.log(`Category deleted: ${id}`, result)
+      return result
     } catch (error) {
       this.logger.error(`Error delete a category ${id}`, error)
       if (error instanceof NotFoundError) {

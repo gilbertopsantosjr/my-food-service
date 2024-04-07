@@ -1,7 +1,7 @@
 import { CategoryService } from '@/category/application/category.service'
+import { ResponseCategoryDto } from '@/category/model/category.model'
 import { Controller, Get, Logger, Query } from '@nestjs/common'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { ResponseCategoryDto } from './dto/category.dto'
 
 @Controller('category')
 @ApiTags('category')

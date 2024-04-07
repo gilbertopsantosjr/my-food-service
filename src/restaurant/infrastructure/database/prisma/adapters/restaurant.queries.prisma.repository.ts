@@ -1,5 +1,5 @@
 import { RestaurantQueriesRepository } from '@/restaurant/application/ports/restaurant.queries.repository'
-import { RestaurantModel } from '@/restaurant/model/restaurant.model'
+import { ResponseRestaurantDto } from '@/restaurant/model/restaurant.model'
 import { PrismaService } from '@core/databases/prisma/prisma.service'
 import { Injectable, Logger } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
@@ -15,12 +15,13 @@ export class RestaurantQueriesPrismaRepository
   async findByTitleAndUserId(
     title: string,
     userId: number
-  ): Promise<RestaurantModel | null> {
+  ): Promise<ResponseRestaurantDto | null> {
     try {
       const query = {
         where: {
           title,
-          userId: userId
+          userId: userId,
+          published: true
         },
         include: {
           categories: true
@@ -35,7 +36,7 @@ export class RestaurantQueriesPrismaRepository
     }
   }
 
-  async findById(restaurantId: number): Promise<RestaurantModel | null> {
+  async findById(restaurantId: number): Promise<ResponseRestaurantDto | null> {
     const result = await this.prismaService.restaurant.findUnique({
       where: { id: restaurantId },
       include: {
@@ -46,8 +47,9 @@ export class RestaurantQueriesPrismaRepository
     return result ? RestaurantFactory.toModel(result) : null
   }
 
-  async findAll(): Promise<RestaurantModel[]> {
+  async findAll(): Promise<ResponseRestaurantDto[]> {
     const entities = await this.prismaService.restaurant.findMany({
+      where: { published: true },
       include: {
         user: true,
         categories: true
@@ -58,9 +60,10 @@ export class RestaurantQueriesPrismaRepository
       : []
   }
 
-  async findAllByUserId(userId: number): Promise<RestaurantModel[]> {
+  async findAllByUserId(userId: number): Promise<ResponseRestaurantDto[]> {
     const entities = await this.prismaService.restaurant.findMany({
       where: {
+        published: true,
         user: {
           some: { id: userId }
         }

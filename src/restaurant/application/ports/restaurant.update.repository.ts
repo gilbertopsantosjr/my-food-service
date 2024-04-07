@@ -1,8 +1,10 @@
-import { RestaurantModel } from '@/restaurant/model/restaurant.model'
-import { UpdateRestaurantDto } from '@/restaurant/presenters/http/dto/restaurante.dto'
+import {
+  ResponseRestaurantDto,
+  UpdateRestaurantDto
+} from '@/restaurant/model/restaurant.model'
 
 export abstract class RestaurantUpdateRepository {
   abstract execute(
     category: UpdateRestaurantDto
-  ): Promise<RestaurantModel | null>
+  ): Promise<ResponseRestaurantDto | null>
 }

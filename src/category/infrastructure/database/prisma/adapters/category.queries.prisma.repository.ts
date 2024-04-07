@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CategoryQueriesRepository } from '@/category/application/ports/category.queries.repository'
-import { CategoryModel } from '@/category/model/category.model'
+import { ResponseCategoryDto } from '@/category/model/category.model'
 import { PrismaService } from '@core/databases/prisma/prisma.service'
 import { Injectable, Logger } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
@@ -15,7 +15,9 @@ export class CategoryQueriesPrismaRepository
 
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findAllByIds(categoryIds: number[]): Promise<CategoryModel[] | []> {
+  async findAllByIds(
+    categoryIds: number[]
+  ): Promise<ResponseCategoryDto[] | []> {
     try {
       const entities = await this.prismaService.category.findMany({
         include: {
@@ -39,7 +41,7 @@ export class CategoryQueriesPrismaRepository
   async findByTitleAndResturantId(
     title: string,
     restaurantId: number
-  ): Promise<CategoryModel | null> {
+  ): Promise<ResponseCategoryDto | null> {
     try {
       const result = await this.prismaService.category.findFirst({
         where: {
@@ -59,7 +61,7 @@ export class CategoryQueriesPrismaRepository
     }
   }
 
-  async findById(categoryId: number): Promise<CategoryModel | null> {
+  async findById(categoryId: number): Promise<ResponseCategoryDto | null> {
     try {
       const result = await this.prismaService.category.findUnique({
         where: { id: categoryId },
@@ -74,7 +76,7 @@ export class CategoryQueriesPrismaRepository
     }
   }
 
-  async findAll(): Promise<CategoryModel[] | []> {
+  async findAll(): Promise<ResponseCategoryDto[] | []> {
     try {
       const entities = await this.prismaService.category.findMany({
         include: {
@@ -92,7 +94,7 @@ export class CategoryQueriesPrismaRepository
 
   async findAllByRestaurantId(
     restaurantId: number
-  ): Promise<CategoryModel[] | []> {
+  ): Promise<ResponseCategoryDto[] | []> {
     try {
       const entities = await this.prismaService.category.findMany({
         where: {

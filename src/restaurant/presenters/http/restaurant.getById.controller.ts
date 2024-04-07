@@ -1,4 +1,5 @@
 import { RestaurantService } from '@/restaurant/application/restaurant.service'
+import { ResponseRestaurantDto } from '@/restaurant/model/restaurant.model'
 import {
   Controller,
   Get,
@@ -9,7 +10,6 @@ import {
 } from '@nestjs/common'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { isEmptyObject } from '@new-developers-group/core-ts-lib'
-import { ResponseRestaurantDto } from './dto/restaurante.dto'
 
 @Controller('restaurant')
 @ApiTags('restaurant')

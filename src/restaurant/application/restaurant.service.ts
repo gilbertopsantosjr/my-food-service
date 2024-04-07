@@ -4,11 +4,11 @@ import {
   DuplicateError,
   NotFoundError
 } from '@new-developers-group/core-ts-lib'
-import { RestaurantModel } from '../model/restaurant.model'
 import {
+  ResponseRestaurantDto,
   RestaurantWithUser,
   UpdateRestaurantDto
-} from '../presenters/http/dto/restaurante.dto'
+} from '../model/restaurant.model'
 import { RestaurantCreateRepository } from './ports/restaurant.create.repository'
 import { RestaurantQueriesRepository } from './ports/restaurant.queries.repository'
 import { RestaurantUpdateRepository } from './ports/restaurant.update.repository'
@@ -25,16 +25,7 @@ export class RestaurantService {
 
   async create(
     restaurant: RestaurantWithUser
-  ): Promise<RestaurantModel | null> {
-    //rules
-    // check if categories exists
-    const categoriesIds = restaurant.categories.map((item) => item.id)
-    const categoriesExists =
-      await this.categoryQueryRepository.findAllByIds(categoriesIds)
-
-    if (categoriesExists.length !== categoriesIds.length) {
-      throw new NotFoundError('Category not found')
-    }
+  ): Promise<ResponseRestaurantDto | null> {
     // check if restaurant exists
     const found = await this.queryRepository.findByTitleAndUserId(
       restaurant.title,
@@ -45,42 +36,52 @@ export class RestaurantService {
     }
     // 5 - return restaurant
     const result = await this.createRepository.execute(restaurant)
-    this.logger.log('Restaurant created', result)
+    this.logger.debug('Restaurant created', result)
     return result
   }
 
   async update(
     restaurant: UpdateRestaurantDto
-  ): Promise<RestaurantModel | null> {
+  ): Promise<ResponseRestaurantDto | null> {
     const exists = await this.queryRepository.findById(restaurant.id)
     if (!exists) {
       throw new NotFoundError('Restaurant not found')
     }
+    // check if categories exists
+    const categoriesIds = restaurant.categories?.map((item) => item!.id)
+    const categoriesExists =
+      await this.categoryQueryRepository.findAllByIds(categoriesIds)
+
+    if (categoriesExists.length !== categoriesIds.length) {
+      throw new NotFoundError('Category not found')
+    }
     const result = await this.updateRepository.execute(restaurant)
-    this.logger.log('Restaurant updated', result)
+    this.logger.debug('Restaurant updated', result)
     return result
   }
 
-  async findAll(): Promise<RestaurantModel[]> {
+  async findAll(): Promise<ResponseRestaurantDto[]> {
     // adding cache here
     return await this.queryRepository.findAll()
   }
 
-  async findById(id: number): Promise<RestaurantModel | null> {
+  async findById(id: number): Promise<ResponseRestaurantDto | null> {
     // adding cache here
     return await this.queryRepository.findById(id)
   }
 
-  async delete(id: number): Promise<RestaurantModel | null> {
+  async delete(id: number, userId: number): Promise<boolean> {
     const exists = await this.queryRepository.findById(id)
     if (!exists) {
       throw new NotFoundError('Restaurant not found')
     }
     const result = await this.updateRepository.execute({
       id,
-      published: false
+      published: false,
+      user: { id: userId }
     } as UpdateRestaurantDto)
-    this.logger.log('Restaurant deleted', result)
-    return result
+    this.logger.debug('Restaurant deleted', result)
+    const deleted = await this.queryRepository.findById(id)
+    return deleted ? false : true
   }
 }

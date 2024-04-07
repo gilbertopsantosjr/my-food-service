@@ -1,16 +1,15 @@
 import { CategoryService } from '@/category/application/category.service'
+import { ResponseCategoryDto } from '@/category/model/category.model'
 import {
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
   Logger,
+  NotFoundException,
   Param,
   ParseIntPipe
 } from '@nestjs/common'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { isEmptyObject } from '@new-developers-group/core-ts-lib/'
-import { ResponseCategoryDto } from './dto/category.dto'
 
 @Controller('category')
 @ApiTags('category')
@@ -32,10 +31,12 @@ export class GetCategoryByIdController {
     status: 500,
     description: 'Could not get by id the category.'
   })
-  async getById(@Param('id', ParseIntPipe) id: string) {
+  async getById(
+    @Param('id', ParseIntPipe) id: string
+  ): Promise<ResponseCategoryDto> {
     const result = await this.categoryService.findById(+id)
     if (!result || isEmptyObject(result)) {
-      throw new HttpException('Category not found', HttpStatus.NOT_FOUND)
+      throw new NotFoundException('Category not found')
     }
     this.logger.debug(`Category found:`, result)
     return result

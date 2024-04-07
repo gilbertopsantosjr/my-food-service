@@ -1,15 +1,17 @@
-import { CategoryModel } from '@/category/model/category.model'
+import { ResponseCategoryDto } from '@/category/model/category.model'
 
 /* use abstract class as javascript doesnt have interfaces for DI*/
 export abstract class CategoryQueriesRepository {
   abstract findByTitleAndResturantId(
     title: string,
     restaurantId: number
-  ): Promise<CategoryModel | null>
-  abstract findById(categoryId: number): Promise<CategoryModel | null>
-  abstract findAll(): Promise<CategoryModel[] | []>
-  abstract findAllByIds(categoryIds: number[]): Promise<CategoryModel[] | []>
+  ): Promise<ResponseCategoryDto | null>
+  abstract findById(categoryId: number): Promise<ResponseCategoryDto | null>
+  abstract findAll(): Promise<ResponseCategoryDto[] | []>
+  abstract findAllByIds(
+    categoryIds: number[]
+  ): Promise<ResponseCategoryDto[] | []>
   abstract findAllByRestaurantId(
     restaurantId: number
-  ): Promise<CategoryModel[] | []>
+  ): Promise<ResponseCategoryDto[] | []>
 }

@@ -1,9 +1,11 @@
-import { RestaurantModel } from '@/restaurant/model/restaurant.model'
-import { RestaurantWithUser } from '@/restaurant/presenters/http/dto/restaurante.dto'
+import {
+  CreateRestaurantDto,
+  ResponseRestaurantDto
+} from '@/restaurant/model/restaurant.model'
 
 /* use abstract class as javascript doesnt have interfaces for DI*/
 export abstract class RestaurantCreateRepository {
   abstract execute(
-    category: Partial<RestaurantWithUser>
-  ): Promise<RestaurantModel | null>
+    category: CreateRestaurantDto
+  ): Promise<ResponseRestaurantDto | null>
 }

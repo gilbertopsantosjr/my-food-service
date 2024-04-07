@@ -1,4 +1,7 @@
-import { CategoryModel } from '@/category/model/category.model'
+import {
+  CreateCategoryDto,
+  ResponseCategoryDto
+} from '@/category/model/category.model'
 import { Prisma } from '@prisma/client'
 
 export type CategoriesWithRestaurantes = Prisma.CategoryGetPayload<{
@@ -8,7 +11,7 @@ export type CategoriesWithRestaurantes = Prisma.CategoryGetPayload<{
 }>
 
 export class CategoryFactory {
-  static toCreate(dto: CategoryModel): Prisma.CategoryCreateInput {
+  static toCreate(dto: CreateCategoryDto): Prisma.CategoryCreateInput {
     return {
       title: dto.title,
       description: dto.description,
@@ -18,25 +21,15 @@ export class CategoryFactory {
     } satisfies Prisma.CategoryCreateInput
   }
 
-  static toModelCreated(entity: CategoryModel): CategoryModel {
-    return {
-      id: entity.id,
-      title: entity.title,
-      description: entity.description,
-      createdAt: entity.createdAt
-    } satisfies CategoryModel
-  }
-
-  static toModel(entity: CategoriesWithRestaurantes): CategoryModel {
+  static toModel(entity: CategoriesWithRestaurantes): ResponseCategoryDto {
     return {
       id: entity.id,
       title: entity.title,
       description: entity.description,
       createdAt: entity.createdAt,
       restaurants: {
-        id: entity.restaurants[0].id,
-        title: entity.restaurants[0].title
+        id: entity.restaurants[0].id
       }
-    } satisfies CategoryModel
+    } satisfies ResponseCategoryDto
   }
 }

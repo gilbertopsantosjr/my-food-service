@@ -1,19 +1,19 @@
 import { RestaurantService } from '@/restaurant/application/restaurant.service'
+import {
+  ResponseRestaurantDto,
+  UpdateRestaurantDto
+} from '@/restaurant/model/restaurant.model'
 import { ZodValidationPipe } from '@anatine/zod-nestjs'
 import {
   Body,
   Controller,
   Logger,
-  Param,
-  ParseIntPipe,
+  NotFoundException,
   Put,
   UsePipes
 } from '@nestjs/common'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
-import {
-  ResponseRestaurantDto,
-  UpdateRestaurantDto
-} from './dto/restaurante.dto'
+import { NotFoundError } from '@new-developers-group/core-ts-lib'
 
 @Controller('restaurant')
 @ApiTags('restaurant')
@@ -21,7 +21,7 @@ export class RestaurantUpdateController {
   private readonly logger = new Logger(RestaurantUpdateController.name)
   constructor(private readonly restaurantService: RestaurantService) {}
 
-  @Put(':id')
+  @Put()
   @UsePipes(ZodValidationPipe)
   @ApiOperation({ summary: 'Update a restaurant' })
   @ApiResponse({
@@ -30,14 +30,25 @@ export class RestaurantUpdateController {
     type: ResponseRestaurantDto
   })
   async execute(
-    @Body() restaurantDto: UpdateRestaurantDto,
-    @Param('id', ParseIntPipe) id: string
-  ) {
-    this.logger.log('Updating a restaurant', restaurantDto)
-    return await this.restaurantService.update({
-      ...restaurantDto,
-      user: { id: 1 },
-      id: +id
-    })
+    @Body() restaurantDto: UpdateRestaurantDto
+  ): Promise<ResponseRestaurantDto | null> {
+    this.logger.debug('Updating a restaurant', restaurantDto)
+    try {
+      const result = await this.restaurantService.update({
+        ...restaurantDto,
+        user: { id: 3 }
+      })
+      return result
+    } catch (error) {
+      this.logger.error(
+        `Error creating a restaurant ${restaurantDto.title}`,
+        error
+      )
+      if (error instanceof NotFoundError) {
+        throw new NotFoundException(error.message)
+      } else {
+        throw error
+      }
+    }
   }
 }
