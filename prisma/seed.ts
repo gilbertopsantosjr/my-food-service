@@ -13,7 +13,8 @@ async function main() {
   const gilbertopsantosjr = await prisma.user.create({
     data: {
       email: 'gilbertopsantos@gmail.com',
-      name: 'Gilberto Santos',
+      username: 'Gilberto Santos',
+      password: '21232f297a57a5a743894a0e4a801fc3',
       createdAt: new Date()
     } satisfies Prisma.UserCreateInput
   })

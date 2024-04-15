@@ -4,6 +4,7 @@ import {
   ResponseCategoryDto
 } from '@/category/model/category.model'
 import { ZodValidationPipe } from '@anatine/zod-nestjs'
+import { JWT } from '@core/auth/constants'
 import {
   BadRequestException,
   Body,
@@ -13,7 +14,12 @@ import {
   Post,
   UsePipes
 } from '@nestjs/common'
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags
+} from '@nestjs/swagger'
 import {
   DuplicateError,
   NotFoundError
@@ -21,6 +27,7 @@ import {
 
 @Controller('category')
 @ApiTags('category')
+@ApiBearerAuth(JWT.accessToken)
 export class CategoryCreateController {
   private readonly logger = new Logger(CategoryCreateController.name)
   constructor(private readonly categoryService: CategoryService) {}
